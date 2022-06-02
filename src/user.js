@@ -10,13 +10,6 @@ export function UserLogin() {
   const { setUser, setFirstName, setLastName, setPicture } = useContext(userContext);
   const [message, setMessage] = useState('');
   var User = localStorage.getItem('User');
-  if (User){
-    setUser(User);
-    setFirstName(localStorage.getItem('FirstName'));
-    setLastName(localStorage.getItem('LastName'));
-    setPicture(localStorage.getItem('Picture'))
-    history.push('showPosts');
-  }
  
   function getUser(details) {
     fetch(`http://localhost:4000/getUser`, {
@@ -64,6 +57,15 @@ export function UserLogin() {
       getUser(details);
     },
   });
+  useEffect (()=>{
+    if (User){
+      setUser(User);
+      setFirstName(localStorage.getItem('FirstName'));
+      setLastName(localStorage.getItem('LastName'));
+      setPicture(localStorage.getItem('Picture'))
+      history.push('showPosts');
+    }
+  }, [])
   return (
     <Container>
       {message === "waiting" ?
