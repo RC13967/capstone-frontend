@@ -3,9 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge } from "react-bootstrap";
 import { useHistory } from 'react-router';
 import { userContext } from "./App"
-import { Button, Container, Modal, FormGroup, FormControl, Form, Image } from "react-bootstrap";
+import { Button, Container, Modal, Form} from "react-bootstrap";
 import { faComments, faThumbsDown, faThumbsUp, faUserPen } from "@fortawesome/free-solid-svg-icons";
-import { OpenedEmailUser } from "./user";
 export function ShowPosts() {
     const history = useHistory();
     const { posts, setPosts, setPicture, picture } = useContext(userContext);
@@ -115,13 +114,14 @@ export function ShowPosts() {
 
     useEffect(() => {
         getPosts();
-        setPicture(localStorage.getItem("Picture"))
+        setPicture(localStorage.getItem("Picture"));
+        // eslint-disable-next-line
     }, [dataState])
     return (
         <Container>
             <div className="profile-header">
                 <div>
-                    <img className="profile" src={picture}
+                    <img className="profile" src={picture} alt=""
                         onError={(e) =>
                             e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                     <div className="user-name">{firstName} {lastName}</div>
@@ -264,7 +264,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
     return (
         <div className="post-card">
             <div className="posted-user-details">
-                <img className="posted-user-pic" src={post.postedUserPic}
+                <img className="posted-user-pic" src={post.postedUserPic} alt = ""
                     onError={(e) =>
                         e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                 <div>
@@ -283,7 +283,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
                                 post.fileType.split('/')[0] === "video" ?
                                     (<video className="posted-file" src={post.file} controls></video>) : (
                                         post.fileType.split('/')[0] === "image" ?
-                                            (<img className="posted-file" src={post.file} />)
+                                            (<img className="posted-file" src={post.file} alt = "" />)
                                             : (<></>)
 
                                     )
@@ -310,7 +310,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
             </div>
             {commentsOpened ? <>
                 <div>
-                    <img className="comment-user-pic" src={picture}
+                    <img className="comment-user-pic" src={picture} alt = ""
                         onError={(e) =>
                             e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                     <input className="comment-box" value={commentedValue} placeholder="type a comment here"
@@ -374,7 +374,7 @@ function CommentDetail ({commentDetail, post, dataState, email, setDataState, pi
     return(
         <>
                     <div className="comment-details">
-                        <img className="comment-user-pic" src={commentDetail.picture}
+                        <img className="comment-user-pic" src={commentDetail.picture} alt = ""
                             onError={(e) =>
                                 e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                         <div className="comment">
@@ -403,7 +403,7 @@ function CommentDetail ({commentDetail, post, dataState, email, setDataState, pi
                     </div>
                     {replyOpened ? <>
                         <div>
-                            <img className="comment-user-pic" src={picture}
+                            <img className="comment-user-pic" src={picture} alt = ""
                                 onError={(e) =>
                                     e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                             <input className="comment-box" value={repliedValue} placeholder = "type a reply here"
@@ -416,7 +416,7 @@ function CommentDetail ({commentDetail, post, dataState, email, setDataState, pi
                         commentDetail.replyDetails.map((replyDetail)=><>
                         
                         <div className="comment-details reply">
-                        <img className="comment-user-pic" src={replyDetail.picture}
+                        <img className="comment-user-pic" src={replyDetail.picture} alt = ""
                             onError={(e) =>
                                 e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                         <div className="comment">
