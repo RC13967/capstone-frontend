@@ -4,15 +4,21 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { User, AddUser, ActivateUser, ForgotUser, OpenedEmailUser } from './user';
+import { ShowPosts } from './showPosts';
 export const userContext = createContext(null);
 function App() {
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [posts, setPosts] = useState([]);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [picture, setPicture] = useState("");
   return (
     <>
       <userContext.Provider value={{
-        user: user, setUser: setUser, email:email, setEmail:setEmail, posts:posts, setPosts:setPosts
+        user: user, setUser: setUser, email:email, setEmail:setEmail, posts:posts, setPosts:setPosts,
+        firstName:firstName, setFirstName:setFirstName, lastName:lastName, setLastName:setLastName,
+        picture:picture, setPicture:setPicture
       }}>
         <Navigation />
       </userContext.Provider>
@@ -21,7 +27,7 @@ function App() {
 }
 function Navigation() {
   const history = useHistory();
-  const { setUser, user } = useContext(userContext);
+  const { setUser, user, setFirstName, setLastName, setPicture } = useContext(userContext);
   const User = localStorage.getItem('User');
   useEffect(() => {
     setUser(User);
@@ -29,7 +35,13 @@ function Navigation() {
   }, [User]);
   function clearUser() {
     localStorage.setItem('User', '');
+    localStorage.setItem('FirstName', '');
+    localStorage.setItem('LastName', '');
+    localStorage.setItem('Picture', '');
     setUser('');
+    setFirstName('');
+    setLastName('');
+    setPicture('');
     alert("Thanks for visiting");
     history.push("/")
   }
@@ -37,7 +49,7 @@ function Navigation() {
     <>
       <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
         <Container>
-          <Navbar.Brand href="/">Free Chat</Navbar.Brand>
+          <Navbar.Brand href="/">ConNxt</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             
@@ -73,6 +85,9 @@ function Routes() {
       </Route>
       <Route path="/retrieveUser/:email/:token">
         <OpenedEmailUser />
+      </Route>
+      <Route path="/showPosts">
+        <ShowPosts />
       </Route>
       <Route path="/">
         <Home />

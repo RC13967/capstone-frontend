@@ -7,13 +7,17 @@ import * as yup from "yup";
 import { userContext } from './App';
 export function User() {
   const history = useHistory();
-  const { setUser } = useContext(userContext);
+  const { setUser, setFirstName, setLastName, setPicture } = useContext(userContext);
+  const [message, setMessage] = useState('');
   var User = localStorage.getItem('User');
   if (User){
     setUser(User);
-    history.push('showPosts')
+    setFirstName(localStorage.getItem('FirstName'));
+    setLastName(localStorage.getItem('LastName'));
+    setPicture(localStorage.getItem('Picture'))
+    history.push('showPosts');
   }
-  const [message, setMessage] = useState('');
+ 
   function getUser(details) {
     fetch(`http://localhost:4000/getUser`, {
       method: "POST",
@@ -23,8 +27,24 @@ export function User() {
       },
     })
       .then((data) => data.json())
-      .then((userData) => userData.message !== "success" ? setMessage(userData.message)
-        : (setUser(details.email), localStorage.setItem('User',details.email), history.push("/showPosts")));
+      .then((userData) => dataFetched(details, userData))
+      
+  }
+  function dataFetched(details, userData){
+    setMessage(userData.message)
+    if(userData.message === "success" ){
+      setUser(details.email);
+      setFirstName(userData.firstName);
+      setLastName(userData.lastName);
+      setPicture(userData.picture);
+      localStorage.setItem('User',details.email);
+      localStorage.setItem('FirstName',userData.firstName);
+      localStorage.setItem('LastName',userData.lastName);
+      localStorage.setItem('Picture',userData.picture);
+       history.push("/showPosts");
+
+    }
+
   }
   const formik = useFormik({
     initialValues: {
