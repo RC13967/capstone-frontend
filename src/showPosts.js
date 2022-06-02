@@ -213,8 +213,8 @@ export function ShowPosts() {
                 <Button variant="outline-primary" onClick={(e) => sortByDate(e)}>date</Button>
             </div>
             <div className="post-cards" >
-                {posts.length > 0 ? posts.map((post) =>
-                    <Posts post={post} email={email} picture={picture}
+                {posts.length > 0 ? posts.map((post, index) =>
+                    <Posts post={post} email={email} picture={picture} key = {index}
                         dataState={dataState} setDataState={setDataState} />) : <></>}
             </div>
         </Container>
@@ -320,9 +320,9 @@ function Posts({ post, email, picture, dataState, setDataState }) {
 
                 </div>
                 <hr/>
-                {post.commentDetails.length > 0 ? post.commentDetails.map((commentDetail) =>
+                {post.commentDetails.length > 0 ? post.commentDetails.map((commentDetail, index) =>
                  <CommentDetail  commentDetail = {commentDetail} post={post} dataState={dataState} email={email}
-                 setDataState={setDataState} picture={picture} />) : <></>}</>
+                 setDataState={setDataState} picture={picture} key = {index} />) : <></>}</>
                 : (<></>)}
             <div>
 
@@ -413,7 +413,7 @@ function CommentDetail ({commentDetail, post, dataState, email, setDataState, pi
 
                         </div>
                         {commentDetail.replyDetails.length > 0 ?
-                        commentDetail.replyDetails.map((replyDetail)=><>
+                        commentDetail.replyDetails.map((replyDetail, index)=><>
                         
                         <div className="comment-details reply">
                         <img className="comment-user-pic" src={replyDetail.picture} alt = ""

@@ -5,7 +5,7 @@ import { Container, Spinner, Button, Row, Col, Form } from 'react-bootstrap';
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { userContext } from './App';
-export function User() {
+export function UserLogin() {
   const history = useHistory();
   const { setUser, setFirstName, setLastName, setPicture } = useContext(userContext);
   const [message, setMessage] = useState('');

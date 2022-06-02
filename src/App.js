@@ -3,7 +3,7 @@ import { Route, Switch, useHistory } from "react-router-dom";
 import { createContext, useContext, useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { User, AddUser, ActivateUser, ForgotUser, OpenedEmailUser } from './user';
+import { UserLogin, AddUser, ActivateUser, ForgotUser, OpenedEmailUser } from './user';
 import { ShowPosts } from './showPosts';
 export const userContext = createContext(null);
 function App() {
@@ -72,7 +72,7 @@ function Routes() {
   return (
     <Switch>
       <Route path="/loginUser">
-        <User />
+        <UserLogin />
       </Route>
       <Route path="/signUpUser">
         <AddUser />
@@ -99,7 +99,7 @@ function Home() {
   return (
     <Container >
       <div className="home-header">Welcome!!!</div>
-      <User />
+      <UserLogin />
     </Container>
   )
 }
