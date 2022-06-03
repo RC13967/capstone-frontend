@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge } from "react-bootstrap";
 import { useHistory } from 'react-router';
 import { userContext } from "./App"
-import { Button, Container, Modal, Form} from "react-bootstrap";
+import { Button, Container, Modal, Form } from "react-bootstrap";
 import { faComments, faThumbsDown, faThumbsUp, faUserPen } from "@fortawesome/free-solid-svg-icons";
 export function ShowPosts() {
     const history = useHistory();
@@ -11,6 +11,7 @@ export function ShowPosts() {
     const email = localStorage.getItem('User');
     const firstName = localStorage.getItem("FirstName");
     const lastName = localStorage.getItem("LastName");
+    let userId = localStorage.getItem("UserId");
     if (!email) {
         history.push("/");
     }
@@ -22,6 +23,7 @@ export function ShowPosts() {
     const [fileName, setFileName] = useState('');
     const [dataState, setDataState] = useState(false);
     const [sortState, setSortState] = useState(false);
+    const [myPost, setMyPost] = useState(false);
     const handleCloseProfile = () => setShowProfile(false);
     const handleShowProfile = () => setShowProfile(true);
     const handleChangeProfile = (e) => {
@@ -87,6 +89,7 @@ export function ShowPosts() {
     }
 
     function getPosts() {
+        setMyPost(false);
         fetch(`http://localhost:4000/globalPosts`, {
             method: "POST",
             body: JSON.stringify({ email: email }),
@@ -96,9 +99,10 @@ export function ShowPosts() {
         })
             .then((data) => data.json())
             .then((data) => data.length > 0 ?
-                setPosts(data.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))) : "")
+                setPosts(data.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))) : setPosts(data))
     }
     function getMyPosts() {
+        setMyPost(true);
         fetch(`http://localhost:4000/myPosts`, {
             method: "POST",
             body: JSON.stringify({ email: email }),
@@ -108,12 +112,16 @@ export function ShowPosts() {
         })
             .then((data) => data.json())
             .then((data) => data.length > 0 ?
-                setPosts(data.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))) : "")
+                setPosts(data.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))) : setPosts(data))
 
     }
 
     useEffect(() => {
-        getPosts();
+        if (!myPost) {
+            getPosts();
+        } else {
+            getMyPosts();
+        }
         setPicture(localStorage.getItem("Picture"));
         // eslint-disable-next-line
     }, [dataState])
@@ -214,13 +222,13 @@ export function ShowPosts() {
             </div>
             <div className="post-cards" >
                 {posts.length > 0 ? posts.map((post, index) =>
-                    <Posts post={post} email={email} picture={picture} key = {index}
-                        dataState={dataState} setDataState={setDataState} />) : <></>}
+                    <Posts post={post} email={email} picture={picture} key={index} myPost={myPost}
+                        dataState={dataState} setDataState={setDataState} userId = {userId}/>) : <></>}
             </div>
         </Container>
     )
 }
-function Posts({ post, email, picture, dataState, setDataState }) {
+function Posts({ post, email, picture, dataState, setDataState, myPost, userId }) {
     const [commentsOpened, setCommentsOpened] = useState(false);
     const [commentedValue, setCommentedValue] = useState("");
     const getLikes = (e, post, email) => {
@@ -259,18 +267,30 @@ function Posts({ post, email, picture, dataState, setDataState }) {
                 "Content-Type": "application/json",
             },
         })
+            .then(() => setDataState(!dataState));
+    }
+    const deletePost = (e, post, email) => {
+        e.preventDefault();
+        fetch(`http://localhost:4000/deletePost`, {
+            method: "PUT",
+            body: JSON.stringify({ email: email, post: post }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
             .then(() => setDataState(!dataState))
     }
     return (
         <div className="post-card">
             <div className="posted-user-details">
-                <img className="posted-user-pic" src={post.postedUserPic} alt = ""
+                <img className="posted-user-pic" src={post.postedUserPic} alt=""
                     onError={(e) =>
                         e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                 <div>
                     <div className="">{post.postedUserName}</div>
                     <div>{post.uploadDate}</div>
                 </div>
+                {myPost ? <Button variant="danger" onClick = {(e)=>deletePost(e, post, email)}>Delete</Button> : <></>}
             </div>
             <div className="post-text">{post.postText}</div>
             {
@@ -283,7 +303,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
                                 post.fileType.split('/')[0] === "video" ?
                                     (<video className="posted-file" src={post.file} controls></video>) : (
                                         post.fileType.split('/')[0] === "image" ?
-                                            (<img className="posted-file" src={post.file} alt = "" />)
+                                            (<img className="posted-file" src={post.file} alt="" />)
                                             : (<></>)
 
                                     )
@@ -292,17 +312,17 @@ function Posts({ post, email, picture, dataState, setDataState }) {
             }
             <div>
                 <button className="like-button" onClick={(e) => getLikes(e, post, email)}>
-                    <FontAwesomeIcon icon={faThumbsUp} size='2x'
+                    <FontAwesomeIcon icon={faThumbsUp} size='1x'
                         color={post.liked ? "green" : ""} />
                     <Badge pill bg="primary">{post.likes} </Badge>
                 </button>
                 <button className="like-button" onClick={(e) => getDisLikes(e, post, email)}>
-                    <FontAwesomeIcon icon={faThumbsDown} size='2x'
+                    <FontAwesomeIcon icon={faThumbsDown} size='1x'
                         color={post.disliked ? "green" : ""} />
                     <Badge pill bg="danger">{post.dislikes} </Badge>
                 </button>
                 <button className="like-button" onClick={(e) => getComments(e, post, email)}>
-                    <FontAwesomeIcon icon={faComments} size='2x'
+                    <FontAwesomeIcon icon={faComments} size='1x'
                         color="orange" />
                     <Badge pill bg="info">{post.comments} </Badge>
                 </button>
@@ -310,7 +330,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
             </div>
             {commentsOpened ? <>
                 <div>
-                    <img className="comment-user-pic" src={picture} alt = ""
+                    <img className="comment-user-pic" src={picture} alt=""
                         onError={(e) =>
                             e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
                     <input className="comment-box" value={commentedValue} placeholder="type a comment here"
@@ -319,10 +339,10 @@ function Posts({ post, email, picture, dataState, setDataState }) {
                         <Button variant="primary" onClick={(e) => submitComment(e, commentedValue)} >comment</Button> : <></>}
 
                 </div>
-                <hr/>
+                <hr />
                 {post.commentDetails.length > 0 ? post.commentDetails.map((commentDetail, index) =>
-                 <CommentDetail  commentDetail = {commentDetail} post={post} dataState={dataState} email={email}
-                 setDataState={setDataState} picture={picture} key = {index} />) : <></>}</>
+                    <CommentsComponent commentDetail={commentDetail} post={post} dataState={dataState} email={email}
+                        setDataState={setDataState} picture={picture} key={index} userId={userId} />) : <></>}</>
                 : (<></>)}
             <div>
 
@@ -330,7 +350,7 @@ function Posts({ post, email, picture, dataState, setDataState }) {
         </div>
     )
 }
-function CommentDetail ({commentDetail, post, dataState, email, setDataState, picture}){
+function CommentsComponent({ commentDetail, post, dataState, email, setDataState, picture, userId }) {
     const [replyOpened, setReplyOpened] = useState(false);
     const [repliedValue, setRepliedValue] = useState("");
     const getCommentLikes = (e, commentDetails, postId) => {
@@ -364,72 +384,90 @@ function CommentDetail ({commentDetail, post, dataState, email, setDataState, pi
         e.preventDefault();
         fetch(`http://localhost:4000/replies`, {
             method: "PUT",
-            body: JSON.stringify({ email: email, reply: repliedValue, commentDetails: commentDetails, postId:postId }),
+            body: JSON.stringify({ email: email, reply: repliedValue, commentDetails: commentDetails, postId: postId }),
             headers: {
                 "Content-Type": "application/json",
             },
         })
             .then(() => setDataState(!dataState))
     }
-    return(
+    const deleteComment = (e, commentDetails, post, email) => {
+        e.preventDefault();
+        fetch(`http://localhost:4000/deleteComment`, {
+            method: "PUT",
+            body: JSON.stringify({ email: email, commentDetails: commentDetails, post: post}),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(() => setDataState(!dataState))
+    }
+    return (
         <>
-                    <div className="comment-details">
-                        <img className="comment-user-pic" src={commentDetail.picture} alt = ""
-                            onError={(e) =>
-                                e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
-                        <div className="comment">
-                            <div><b> {commentDetail.firstName} {commentDetail.lastName} </b>  {commentDetail.commentedDate}</div>
-                            <div>{commentDetail.comment}</div>
-                            <button className="like-button" onClick={(e) =>
-                                getCommentLikes(e, commentDetail, post.postId)}>
-                                <FontAwesomeIcon icon={faThumbsUp} size='1x'
-                                    color={commentDetail.liked ? "green" : ""} />
-                                <Badge pill bg="primary">{commentDetail.likes} </Badge>
-                            </button>
-                            <button className="like-button" onClick={(e) =>
-                                getCommentDisLikes(e, commentDetail, post.postId)}>
-                                <FontAwesomeIcon icon={faThumbsDown} size='1x'
-                                    color={commentDetail.disliked ? "green" : ""} />
-                                <Badge pill bg="danger">{commentDetail.dislikes} </Badge>
-                            </button>
-                            <button className="like-button" onClick={(e) =>
-                                getCommentReplies(e, commentDetail, post.postId)}>
-                                <FontAwesomeIcon icon={faComments} size='1x'
-                                    color="orange" />
-                                <Badge pill bg="info">{commentDetail.replies} </Badge>
-                            </button>
-                        </div>
+            <div className="comment-details">
+                <img className="comment-user-pic" src={commentDetail.picture} alt=""
+                    onError={(e) =>
+                        e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
+                <div className="comment">
+                    <div><b> {commentDetail.firstName} {commentDetail.lastName} </b>  {commentDetail.commentedDate}</div>
+                    <div>{commentDetail.comment}</div>
+                  {userId === commentDetail.userId ?
+                   <Button variant="danger" onClick = {(e)=>deleteComment(e,commentDetail, post, email)}>Delete</Button>
+                    : <></>} 
+                  
+                    <button className="like-button" onClick={(e) => 
+                        getCommentLikes(e, commentDetail, post.postId)}>
+                        <FontAwesomeIcon icon={faThumbsUp} size='1x'
+                            color={commentDetail.liked ? "green" : ""} />
+                        <Badge pill bg="primary">{commentDetail.likes} </Badge>
+                    </button>
+                    <button className="like-button" onClick={(e) =>
+                        getCommentDisLikes(e, commentDetail, post.postId)}>
+                        <FontAwesomeIcon icon={faThumbsDown} size='1x'
+                            color={commentDetail.disliked ? "green" : ""} />
+                        <Badge pill bg="danger">{commentDetail.dislikes} </Badge>
+                    </button>
+                    <button className="like-button" onClick={(e) =>
+                        getCommentReplies(e, commentDetail, post.postId)}>
+                        <FontAwesomeIcon icon={faComments} size='1x'
+                            color="orange" />
+                        <Badge pill bg="info">{commentDetail.replies} </Badge>
+                    </button>
+                </div>
 
-                    </div>
-                    {replyOpened ? <>
-                        <div>
-                            <img className="comment-user-pic" src={picture} alt = ""
-                                onError={(e) =>
-                                    e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
-                            <input className="comment-box" value={repliedValue} placeholder = "type a reply here"
-                                onChange={(e) => setRepliedValue(e.target.value)} />
-                            {repliedValue ?
-                                <Button variant="primary" onClick={(e) => submitReply(e, repliedValue, commentDetail, post.postId)} >reply</Button> : <></>}
+            </div>
+            {replyOpened ? <>
+                <div>
+                    <img className="comment-user-pic" src={picture} alt=""
+                        onError={(e) =>
+                            e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
+                    <input className="comment-box" value={repliedValue} placeholder="type a reply here"
+                        onChange={(e) => setRepliedValue(e.target.value)} />
+                    {repliedValue ?
+                        <Button variant="primary" onClick={(e) => submitReply(e, repliedValue, commentDetail, post.postId)} >reply</Button> : <></>}
 
-                        </div>
-                        {commentDetail.replyDetails.length > 0 ?
-                        commentDetail.replyDetails.map((replyDetail, index)=><>
-                        
-                        <div className="comment-details reply">
-                        <img className="comment-user-pic" src={replyDetail.picture} alt = ""
-                            onError={(e) =>
-                                e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
-                        <div className="comment">
-                            <div><b> {replyDetail.firstName} {replyDetail.lastName} 
-                            </b>  {replyDetail.replyDate}</div>
-                            <div>{replyDetail.reply}</div>
-                        </div>
+                </div>
+                {commentDetail.replyDetails.length > 0 ?
+                    commentDetail.replyDetails.map((replyDetail, index) =>
+                        <RepliesComponent replyDetail={replyDetail} key={index} userId = {userId} >
+                        </RepliesComponent>)
+                    : <></>}
+            </> : <></>}
+        </>
+    )
+}
+function RepliesComponent({replyDetail}) {
+    return (
+        <div className="comment-details reply">
+            <img className="comment-user-pic" src={replyDetail.picture} alt=""
+                onError={(e) =>
+                    e.target.src = "https://media.tarkett-image.com/large/TH_24567081_24594081_24596081_24601081_24563081_24565081_24588081_001.jpg"} />
+            <div className="comment">
+                <div><b> {replyDetail.firstName} {replyDetail.lastName}
+                </b>  {replyDetail.replyDate}</div>
+                <div>{replyDetail.reply}</div>
+            </div>
 
-                    </div>
-
-                        </>)
-                        :<></>}
-                         </>: <></>}
-                </>
+        </div>
     )
 }

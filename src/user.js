@@ -10,6 +10,9 @@ export function UserLogin() {
   const { setUser, setFirstName, setLastName, setPicture } = useContext(userContext);
   const [message, setMessage] = useState('');
   var User = localStorage.getItem('User');
+  if (User){
+    history.push('showPosts');
+  }
  
   function getUser(details) {
     fetch(`http://localhost:4000/getUser`, {
@@ -24,7 +27,7 @@ export function UserLogin() {
       
   }
   function dataFetched(details, userData){
-    setMessage(userData.message)
+    setMessage(userData.message);
     if(userData.message === "success" ){
       setUser(details.email);
       setFirstName(userData.firstName);
@@ -34,10 +37,9 @@ export function UserLogin() {
       localStorage.setItem('FirstName',userData.firstName);
       localStorage.setItem('LastName',userData.lastName);
       localStorage.setItem('Picture',userData.picture);
+      localStorage.setItem('UserId',userData.userId);
        history.push("/showPosts");
-
     }
-
   }
   const formik = useFormik({
     initialValues: {
@@ -57,15 +59,6 @@ export function UserLogin() {
       getUser(details);
     },
   });
-  useEffect (()=>{
-    if (User){
-      setUser(User);
-      setFirstName(localStorage.getItem('FirstName'));
-      setLastName(localStorage.getItem('LastName'));
-      setPicture(localStorage.getItem('Picture'))
-      history.push('showPosts');
-    }
-  }, [])
   return (
     <Container>
       {message === "waiting" ?
@@ -74,7 +67,7 @@ export function UserLogin() {
         </Spinner>
         :
         (message ? message : <>
-          <div className="home-header">Login to unlimited free chatting </div>
+          <div className="home-header">Login to upload unlimited posts for free!  </div>
           <form onSubmit={formik.handleSubmit}>
             <input className="input" placeholder="Email" type="email" name="email"
               onChange={formik.handleChange} value={formik.values.email} />

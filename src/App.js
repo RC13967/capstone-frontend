@@ -38,6 +38,7 @@ function Navigation() {
     localStorage.setItem('FirstName', '');
     localStorage.setItem('LastName', '');
     localStorage.setItem('Picture', '');
+    localStorage.setItem('UserId', '');
     setUser('');
     setFirstName('');
     setLastName('');
