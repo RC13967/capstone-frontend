@@ -33,7 +33,7 @@ export function ShowPosts() {
         var formDataProfile = new FormData();
         formDataProfile.append("profileFile", profileFile);
         formDataProfile.append("email", email);
-        fetch(`http://localhost:4000/addProfile`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/addProfile`, {
             method: "PUT",
             body: formDataProfile,
         }).then((data) => data.json())
@@ -57,7 +57,7 @@ export function ShowPosts() {
         formData.append("fileName", fileName);
         formData.append("email", email);
         formData.append("postText", postText)
-        fetch(`http://localhost:4000/addPost`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/addPost`, {
             method: "PUT",
             body: formData,
         });
@@ -90,7 +90,7 @@ export function ShowPosts() {
 
     function getPosts() {
         setMyPost(false);
-        fetch(`http://localhost:4000/globalPosts`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/globalPosts`, {
             method: "POST",
             body: JSON.stringify({ email: email }),
             headers: {
@@ -103,7 +103,7 @@ export function ShowPosts() {
     }
     function getMyPosts() {
         setMyPost(true);
-        fetch(`http://localhost:4000/myPosts`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/myPosts`, {
             method: "POST",
             body: JSON.stringify({ email: email }),
             headers: {
@@ -233,7 +233,7 @@ function Posts({ post, email, picture, dataState, setDataState, myPost, userId }
     const [commentedValue, setCommentedValue] = useState("");
     const getLikes = (e, post, email) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/likes`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/likes`, {
             method: "PUT",
             body: JSON.stringify({ email: email, post: post }),
             headers: {
@@ -244,7 +244,7 @@ function Posts({ post, email, picture, dataState, setDataState, myPost, userId }
     }
     const getDisLikes = (e, post, commentId) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/disLikes`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/disLikes`, {
             method: "PUT",
             body: JSON.stringify({ email: email, post: post }),
             headers: {
@@ -260,7 +260,7 @@ function Posts({ post, email, picture, dataState, setDataState, myPost, userId }
     const submitComment = (e, commentedValue) => {
         setCommentedValue("");
         e.preventDefault();
-        fetch(`http://localhost:4000/comments`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/comments`, {
             method: "PUT",
             body: JSON.stringify({ email: email, post: post, comment: commentedValue }),
             headers: {
@@ -271,7 +271,7 @@ function Posts({ post, email, picture, dataState, setDataState, myPost, userId }
     }
     const deletePost = (e, post, email) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/deletePost`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/deletePost`, {
             method: "PUT",
             body: JSON.stringify({ email: email, post: post }),
             headers: {
@@ -355,7 +355,7 @@ function CommentsComponent({ commentDetail, post, dataState, email, setDataState
     const [repliedValue, setRepliedValue] = useState("");
     const getCommentLikes = (e, commentDetails, postId) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/commentLikes`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/commentLikes`, {
             method: "PUT",
             body: JSON.stringify({ commentDetails: commentDetails, postId: postId, email: email }),
             headers: {
@@ -366,7 +366,7 @@ function CommentsComponent({ commentDetail, post, dataState, email, setDataState
     }
     const getCommentDisLikes = (e, commentDetails, postId) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/commentDisLikes`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/commentDisLikes`, {
             method: "PUT",
             body: JSON.stringify({ commentDetails: commentDetails, postId: postId, email: email }),
             headers: {
@@ -382,7 +382,7 @@ function CommentsComponent({ commentDetail, post, dataState, email, setDataState
     const submitReply = (e, repliedValue, commentDetails, postId) => {
         setRepliedValue("");
         e.preventDefault();
-        fetch(`http://localhost:4000/replies`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/replies`, {
             method: "PUT",
             body: JSON.stringify({ email: email, reply: repliedValue, commentDetails: commentDetails, postId: postId }),
             headers: {
@@ -393,7 +393,7 @@ function CommentsComponent({ commentDetail, post, dataState, email, setDataState
     }
     const deleteComment = (e, commentDetails, post, email) => {
         e.preventDefault();
-        fetch(`http://localhost:4000/deleteComment`, {
+        fetch(`https://capstone-ranjith.herokuapp.com/deleteComment`, {
             method: "PUT",
             body: JSON.stringify({ email: email, commentDetails: commentDetails, post: post}),
             headers: {

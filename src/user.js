@@ -15,7 +15,7 @@ export function UserLogin() {
   }
  
   function getUser(details) {
-    fetch(`http://localhost:4000/getUser`, {
+    fetch(`https://capstone-ranjith.herokuapp.com/getUser`, {
       method: "POST",
       body: JSON.stringify(details),
       headers: {
@@ -93,7 +93,7 @@ export function AddUser() {
   const history = useHistory();
   const [message, setMessage] = useState('');
   function checkEmail() {
-    fetch("http://localhost:4000/checkUserEmail", {
+    fetch("https://capstone-ranjith.herokuapp.com/checkUserEmail", {
       method: "POST",
       body: JSON.stringify({ email: formik.values.email }),
       headers: {
@@ -104,7 +104,7 @@ export function AddUser() {
       .then((userdata) => setMessage(userdata.message));
   };
   function createAccount(details) {
-    fetch("http://localhost:4000/UserSignUp", {
+    fetch("https://capstone-ranjith.herokuapp.com/UserSignUp", {
       method: "POST",
       body: JSON.stringify(details),
       headers: {
@@ -194,7 +194,7 @@ export function ActivateUser() {
   const { email, token } = useParams();
   const [message, setMessage] = useState('waiting');
   function getMessage() {
-    fetch(`http://localhost:4000/activateUser/${email}/${token}`, {
+    fetch(`https://capstone-ranjith.herokuapp.com/activateUser/${email}/${token}`, {
       method: "PUT",
     })
       .then((data) => data.json())
@@ -229,7 +229,7 @@ export function ForgotUser() {
     }
   };
   function sendEmail() {
-    fetch("http://localhost:4000/forgotUser", {
+    fetch("https://capstone-ranjith.herokuapp.com/forgotUser", {
       method: "POST",
       body: JSON.stringify({ email: email }),
       headers: {
@@ -283,14 +283,14 @@ export function OpenedEmailUser() {
   const { email, token } = useParams();
   const [password, setPassword] = useState('');
   function getMessage() {
-    fetch(`http://localhost:4000/retrieveAccountUser/${email}/${token}`, {
+    fetch(`https://capstone-ranjith.herokuapp.com/retrieveAccountUser/${email}/${token}`, {
       method: "GET",
     })
       .then((data) => data.json())
       .then((userdata) => setMessage(userdata.message));
   }
   function updatePassword() {
-    fetch(`http://localhost:4000/resetPasswordUser/${email}/${token}`, {
+    fetch(`https://capstone-ranjith.herokuapp.com/resetPasswordUser/${email}/${token}`, {
       method: "PUT",
       body: JSON.stringify({ newPassword: password }),
       headers: {
